@@ -111,6 +111,7 @@ export default function GameView({ roomCode, gameId }: GameViewProps) {
         states={currentWeekStates}
         currentRole={myPlayer.role as any}
         players={players}
+        showAllInfo={game.show_all_info ?? true}
       />
 
       {/* Event Alerts */}

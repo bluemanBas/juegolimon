@@ -7,12 +7,14 @@ interface SupplyChainDiagramProps {
   states: Record<Role, WeeklyState> | null;
   currentRole: Role | null;
   players: Player[];
+  showAllInfo: boolean;
 }
 
 export default function SupplyChainDiagram({
   states,
   currentRole,
   players,
+  showAllInfo,
 }: SupplyChainDiagramProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 overflow-x-auto">
@@ -41,7 +43,7 @@ export default function SupplyChainDiagram({
                   {player?.display_name || "—"}
                 </p>
 
-                {state && (
+                {state && (showAllInfo || isMe) && (
                   <div className="mt-2 space-y-1">
                     <div className="flex justify-center gap-3 text-xs">
                       <span className="text-campo-600 font-medium">
@@ -54,6 +56,11 @@ export default function SupplyChainDiagram({
                     <div className="text-xs text-earth-400">
                       Pipeline: {state.pipeline_1 + state.pipeline_2}
                     </div>
+                  </div>
+                )}
+                {state && !showAllInfo && !isMe && (
+                  <div className="mt-2 text-xs text-earth-300 italic">
+                    Info oculta
                   </div>
                 )}
               </div>

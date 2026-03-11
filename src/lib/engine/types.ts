@@ -18,6 +18,8 @@ export interface Game {
   current_week: number;
   max_weeks: number;
   seed: number;
+  show_all_info: boolean;
+  events_enabled: boolean;
   created_at: string;
   updated_at: string;
 }

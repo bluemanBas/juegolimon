@@ -24,8 +24,9 @@ export default function LandingPage() {
   const session = useSessionStore();
 
   // Create game state
-  const [createName, setCreateName] = useState("");
   const [scenario, setScenario] = useState<ScenarioId>("normal");
+  const [showAllInfo, setShowAllInfo] = useState(true);
+  const [eventsEnabled, setEventsEnabled] = useState(true);
   const [creating, setCreating] = useState(false);
 
   // Join game state
@@ -36,11 +37,6 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<"create" | "join">("create");
 
   async function handleCreate() {
-    if (!createName.trim()) {
-      toast.error("Ingresa tu nombre");
-      return;
-    }
-
     setCreating(true);
     try {
       const supabase = createClient();
@@ -56,6 +52,8 @@ export default function LandingPage() {
           host_user_id: userId,
           scenario,
           seed,
+          show_all_info: showAllInfo,
+          events_enabled: eventsEnabled,
         })
         .select()
         .single();
@@ -81,9 +79,8 @@ export default function LandingPage() {
         .insert(initialStates);
       if (statesError) throw statesError;
 
-      // Update session store
+      // Update session (no name yet — host picks it in lobby)
       session.setUserId(userId);
-      session.setDisplayName(createName.trim());
       session.setGameId(game.id);
       session.setRoomCode(roomCode);
 
@@ -183,14 +180,6 @@ export default function LandingPage() {
             </h2>
 
             <div className="space-y-4">
-              <Input
-                label="Tu nombre"
-                placeholder="Ej: Maria"
-                value={createName}
-                onChange={(e) => setCreateName(e.target.value)}
-                maxLength={20}
-              />
-
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-2">
                   Escenario
@@ -199,6 +188,58 @@ export default function LandingPage() {
                   selected={scenario}
                   onSelect={setScenario}
                 />
+              </div>
+
+              {/* Toggle: show_all_info */}
+              <div className="flex items-center justify-between rounded-lg border border-earth-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-earth-800">
+                    Información visible
+                  </p>
+                  <p className="text-xs text-earth-500">
+                    {showAllInfo
+                      ? "Todos ven inventarios de todos los eslabones"
+                      : "Cada jugador solo ve su propio inventario"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAllInfo((v) => !v)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    showAllInfo ? "bg-campo-500" : "bg-earth-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      showAllInfo ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Toggle: events_enabled */}
+              <div className="flex items-center justify-between rounded-lg border border-earth-200 p-3">
+                <div>
+                  <p className="text-sm font-medium text-earth-800">
+                    Eventos aleatorios
+                  </p>
+                  <p className="text-xs text-earth-500">
+                    {eventsEnabled
+                      ? "Heladas, plagas y otros eventos pueden ocurrir"
+                      : "Sin eventos aleatorios (modo clasico)"}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setEventsEnabled((v) => !v)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    eventsEnabled ? "bg-campo-500" : "bg-earth-300"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      eventsEnabled ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
 
               <Button
@@ -254,7 +295,7 @@ export default function LandingPage() {
       <div className="mt-8 text-center text-earth-400 text-sm max-w-md">
         <p>
           Basado en el MIT Beer Game. 4 jugadores compiten gestionando una
-          cadena de suministro de limones durante 20 semanas.
+          cadena de suministro de limones durante 20 dias.
         </p>
       </div>
     </div>

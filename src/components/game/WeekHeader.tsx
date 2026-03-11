@@ -24,7 +24,7 @@ export default function WeekHeader({
         <span className="text-3xl">🍋</span>
         <div>
           <h2 className="text-lg font-bold text-earth-800">
-            Semana {currentWeek}{" "}
+            Día {currentWeek}{" "}
             <span className="text-earth-400 font-normal">/ {maxWeeks}</span>
           </h2>
           {scenarioInfo && (

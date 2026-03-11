@@ -46,13 +46,13 @@ function createEvent(
     case "plague":
       magnitude = 0.5; // Half production for 2 weeks
       description =
-        "Plaga detectada: la produccion del Campo se reduce a la mitad por 2 semanas.";
+        "Plaga detectada: la produccion del Campo se reduce a la mitad por 2 dias.";
       break;
 
     case "heavy_rain":
       magnitude = 1; // +1 week lead time
       description =
-        "Lluvias excesivas: se agrega 1 semana extra de lead time entre Campo y Packing House.";
+        "Lluvias excesivas: se agrega 1 dia extra de lead time entre Campo y Packing House.";
       break;
 
     case "cold_storage_failure":
@@ -64,13 +64,13 @@ function createEvent(
     case "trucker_strike":
       magnitude = 1; // Can't ship for 1 week
       description =
-        "Paro de transportistas: Distribucion no puede enviar a Retail esta semana.";
+        "Paro de transportistas: Distribucion no puede enviar a Retail este dia.";
       break;
 
     case "retail_promotion":
       magnitude = 2; // Double demand
       description =
-        "Promocion en retail: la demanda del consumidor se duplica esta semana.";
+        "Promocion en retail: la demanda del consumidor se duplica este dia.";
       break;
 
     default:

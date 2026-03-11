@@ -60,7 +60,7 @@ export default function ResultsView({
               </Badge>
             )}
             <span className="text-sm text-earth-400">
-              {game.max_weeks} semanas
+              {game.max_weeks} días
             </span>
           </div>
         </div>

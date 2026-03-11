@@ -10,6 +10,7 @@ import type { Role, Player, Game } from "@/lib/engine/types";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Badge from "@/components/ui/Badge";
+import Input from "@/components/ui/Input";
 
 function getUserId(): string {
   const match = document.cookie.match(/(?:^|;\s*)user_id=([^;]*)/);
@@ -30,6 +31,7 @@ export default function LobbyView({ roomCode, initialGame }: LobbyViewProps) {
   const [fillingBots, setFillingBots] = useState(false);
   const [starting, setStarting] = useState(false);
   const [claimingRole, setClaimingRole] = useState<Role | null>(null);
+  const [nameInput, setNameInput] = useState("");
 
   const userId = getUserId();
   const isHost = game.host_user_id === userId;
@@ -189,10 +191,47 @@ export default function LobbyView({ roomCode, initialGame }: LobbyViewProps) {
     toast.success("Codigo copiado");
   }
 
+  function handleSetName() {
+    if (!nameInput.trim()) {
+      toast.error("Ingresa tu nombre");
+      return;
+    }
+    session.setDisplayName(nameInput.trim());
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin h-8 w-8 border-4 border-lemon-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // If no display name yet (host arrives without name), ask for it first
+  if (!session.displayName) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <h2 className="text-xl font-bold text-earth-800 mb-1">
+            🍋 Sala de Espera
+          </h2>
+          <p className="text-sm text-earth-500 mb-4">
+            Codigo: <span className="font-mono font-bold text-campo-700">{roomCode}</span>
+          </p>
+          <div className="space-y-4">
+            <Input
+              label="Tu nombre"
+              placeholder="Ej: Maria"
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              maxLength={20}
+              onKeyDown={(e) => e.key === "Enter" && handleSetName()}
+            />
+            <Button onClick={handleSetName} size="lg" className="w-full">
+              Continuar
+            </Button>
+          </div>
+        </Card>
       </div>
     );
   }

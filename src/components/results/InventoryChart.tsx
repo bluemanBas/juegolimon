@@ -32,7 +32,7 @@ export default function InventoryChart({ data }: InventoryChartProps) {
           <CartesianGrid strokeDasharray="3 3" stroke="#e8d5c4" />
           <XAxis
             dataKey="week"
-            label={{ value: "Semana", position: "insideBottom", offset: -5 }}
+            label={{ value: "Día", position: "insideBottom", offset: -5 }}
           />
           <YAxis
             label={{ value: "Cajas", angle: -90, position: "insideLeft" }}

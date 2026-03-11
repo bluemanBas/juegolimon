@@ -106,7 +106,7 @@ export const SCENARIO_INFO: ScenarioInfo[] = [
     key: "normal",
     name: "Temporada Normal",
     description:
-      "Demanda estable con salto en semana 5. Escenario base del Beer Game.",
+      "Demanda estable con salto en dia 5. Escenario base del Beer Game.",
     emoji: "\u{1F34B}",
   },
   {
@@ -120,14 +120,14 @@ export const SCENARIO_INFO: ScenarioInfo[] = [
     key: "oversupply",
     name: "Sobreoferta",
     description:
-      "Alta demanda que colapsa abruptamente en semana 8.",
+      "Alta demanda que colapsa abruptamente en dia 8.",
     emoji: "\u{1F4C9}",
   },
   {
     key: "supply_crisis",
     name: "Crisis de Abastecimiento",
     description:
-      "Lead time aleatorio entre 1 y 4 semanas.",
+      "Lead time aleatorio entre 1 y 4 dias.",
     emoji: "\u26A0\uFE0F",
   },
 ];

@@ -166,9 +166,12 @@ export async function POST(request: Request) {
 
     const pastEvents: GameEvent[] = allEvents || [];
 
-    // 10. Generate new events for this week
+    // 10. Generate new events for this week (if enabled)
     const rng = createWeekRng(game.seed, currentWeek);
-    const newEvents = generateEvents(gameId, currentWeek, rng);
+    const newEvents =
+      game.events_enabled !== false
+        ? generateEvents(gameId, currentWeek, rng)
+        : [];
 
     // 11. Build active effects from all events (past + new)
     const allEventsForTick = [...pastEvents, ...newEvents];
