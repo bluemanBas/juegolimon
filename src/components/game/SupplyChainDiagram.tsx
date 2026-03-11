@@ -83,7 +83,7 @@ export default function SupplyChainDiagram({
                       strokeLinejoin="round"
                     />
                   </svg>
-                  {states && (
+                  {states && (showAllInfo || ROLES_ORDERED[idx] === currentRole || ROLES_ORDERED[idx + 1] === currentRole) && (
                     <span className="text-[10px] text-earth-400">
                       {states[ROLES_ORDERED[idx]].units_shipped} uds
                     </span>
