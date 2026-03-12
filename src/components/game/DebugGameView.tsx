@@ -54,9 +54,12 @@ export default function DebugGameView({ roomCode, gameId }: DebugGameViewProps) 
     return weeks;
   }, [currentWeek]);
 
+  const [advancing, setAdvancing] = useState(false);
+
   const advanceWeek = useCallback(async () => {
     if (advancingRef.current) return;
     advancingRef.current = true;
+    setAdvancing(true);
     try {
       const res = await fetch("/api/advance-week", {
         method: "POST",
@@ -64,16 +67,15 @@ export default function DebugGameView({ roomCode, gameId }: DebugGameViewProps) 
         body: JSON.stringify({ gameId }),
       });
       const data = await res.json();
-      if (!res.ok) console.error("advance-week error:", data.error);
-    } catch (err) {
-      console.error("advance-week fetch error:", err);
+      if (!res.ok) {
+        toast.error("Error al avanzar: " + (data.error || "desconocido"));
+      }
+    } catch (err: any) {
+      toast.error("Error de red al avanzar: " + err.message);
     }
+    setAdvancing(false);
     setTimeout(() => { advancingRef.current = false; }, 2000);
   }, [gameId]);
-
-  useEffect(() => {
-    if (allConfirmed && !isFinished && currentWeekStates) advanceWeek();
-  }, [allConfirmed, isFinished, currentWeekStates, advanceWeek]);
 
   useEffect(() => {
     if (isFinished) {
@@ -116,6 +118,22 @@ export default function DebugGameView({ roomCode, gameId }: DebugGameViewProps) 
 
       {/* Event Alerts */}
       <EventBanner events={activeEvents} week={currentWeek} />
+
+      {/* Manual advance button */}
+      {allConfirmed && !isFinished && (
+        <div className="bg-campo-50 border border-campo-200 rounded-xl p-3 flex items-center justify-between">
+          <p className="text-sm text-campo-700 font-medium">
+            ✅ Todos confirmaron — listo para avanzar
+          </p>
+          <button
+            onClick={advanceWeek}
+            disabled={advancing}
+            className="bg-campo-600 hover:bg-campo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {advancing ? "Avanzando..." : "▶ Avanzar Día"}
+          </button>
+        </div>
+      )}
 
       {/* Role switcher */}
       <div className="bg-white rounded-xl shadow-sm p-3">
