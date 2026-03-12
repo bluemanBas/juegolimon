@@ -107,6 +107,7 @@ export default function LandingPage() {
           seed,
           show_all_info: true,
           events_enabled: true,
+          status: "playing",
         })
         .select()
         .single();
@@ -133,11 +134,6 @@ export default function LandingPage() {
         is_host: role === "campo",
       }));
       await supabase.from("players").insert(playerRows);
-
-      await supabase
-        .from("games")
-        .update({ status: "playing" })
-        .eq("id", game.id);
 
       session.setUserId("debug-campo");
       session.setGameId(game.id);
