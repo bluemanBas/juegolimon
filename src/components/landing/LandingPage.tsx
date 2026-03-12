@@ -91,6 +91,65 @@ export default function LandingPage() {
     }
   }
 
+  async function handleCreateDebug() {
+    setCreating(true);
+    try {
+      const supabase = createClient();
+      const roomCode = generateRoomCode();
+      const seed = Math.floor(Math.random() * 2147483647);
+
+      const { data: game, error: gameError } = await supabase
+        .from("games")
+        .insert({
+          room_code: roomCode,
+          host_user_id: "debug",
+          scenario: "normal",
+          seed,
+          show_all_info: true,
+          events_enabled: true,
+        })
+        .select()
+        .single();
+      if (gameError) throw gameError;
+
+      const demandSchedule = generateDemandSchedule("normal");
+      const demandRows = demandSchedule.map((demand, week) => ({
+        game_id: game.id,
+        week,
+        demand,
+      }));
+      await supabase.from("demand_schedule").insert(demandRows);
+
+      const initialStates = createInitialStates(game.id);
+      await supabase.from("weekly_states").insert(initialStates);
+
+      const debugRoles = ["campo", "packing", "distribucion", "retail"] as const;
+      const playerRows = debugRoles.map((role) => ({
+        game_id: game.id,
+        user_id: `debug-${role}`,
+        display_name: role.charAt(0).toUpperCase() + role.slice(1),
+        role,
+        is_bot: false,
+        is_host: role === "campo",
+      }));
+      await supabase.from("players").insert(playerRows);
+
+      await supabase
+        .from("games")
+        .update({ status: "playing" })
+        .eq("id", game.id);
+
+      session.setUserId("debug-campo");
+      session.setGameId(game.id);
+      session.setRoomCode(roomCode);
+
+      router.push(`/debug/${roomCode}`);
+    } catch (err: any) {
+      toast.error("Error al crear debug: " + (err.message || err));
+      setCreating(false);
+    }
+  }
+
   async function handleJoin() {
     if (!joinName.trim()) {
       toast.error("Ingresa tu nombre");
@@ -291,8 +350,19 @@ export default function LandingPage() {
         )}
       </div>
 
+      {/* Debug Mode */}
+      <div className="mt-6">
+        <button
+          onClick={handleCreateDebug}
+          disabled={creating}
+          className="text-earth-400 hover:text-earth-600 text-xs underline underline-offset-2 transition-colors"
+        >
+          🛠 Modo Debug (un solo PC, todos los roles)
+        </button>
+      </div>
+
       {/* Footer info */}
-      <div className="mt-8 text-center text-earth-400 text-sm max-w-md">
+      <div className="mt-4 text-center text-earth-400 text-sm max-w-md">
         <p>
           Basado en el MIT Beer Game. 4 jugadores compiten gestionando una
           cadena de suministro de limones durante 20 dias.
