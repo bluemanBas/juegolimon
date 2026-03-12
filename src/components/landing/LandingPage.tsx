@@ -106,7 +106,7 @@ export default function LandingPage() {
           scenario: "normal",
           seed,
           show_all_info: true,
-          events_enabled: true,
+          events_enabled: false,
           status: "playing",
         })
         .select()
